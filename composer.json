@@ -1,0 +1,34 @@
+{
+    "name": "nanasess/ec-cube2-amazonpay-v2",
+    "type": "library",
+    "require": {
+        "amzn/amazon-pay-api-sdk-php": "^2.4",
+        "vlucas/phpdotenv": "^5.4"
+    },
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Kentaro Ohkouchi",
+            "email": "nanasess@fsm.ne.jp"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "classmap": [
+            "lib/data/class"
+        ],
+        "files": [
+            "lib/data/amazon_pay/bootstrap.php"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.4"
+    }
+}

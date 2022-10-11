@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  ec-cube:
+    entrypoint: >
+      /bin/bash -c "
+      composer config repositories.ec-cube2-amazonpay-v2 '{\"type\": \"path\", \"url\": \"../composer\"}' &&
+      composer require nanasess/ec-cube2-amazonpay-v2 "dev-main@dev" --ignore-platform-req=php -W &&
+      cp ../composer/lib/html/shopping/amazonpay.php html/shopping &&
+      /wait-for-pgsql.sh apache2-foreground
+      "
+    volumes:
+      - ".:/var/www/composer:delegated"

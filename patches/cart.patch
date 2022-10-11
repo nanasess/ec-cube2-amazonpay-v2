@@ -1,0 +1,41 @@
+diff --git a/data/Smarty/templates/default/cart/index.tpl b/data/Smarty/templates/default/cart/index.tpl
+index 657b889..6a7c187 100644
+--- a/data/Smarty/templates/default/cart/index.tpl
++++ b/data/Smarty/templates/default/cart/index.tpl
+@@ -167,6 +167,9 @@
+                                         <input type="image" class="hover_change_image" src="<!--{$TPL_URLPATH|h}-->img/button/btn_buystep.jpg" alt="購入手続きへ" name="confirm" />
+                                     <!--{/if}-->
+                                 </li>
++                                <li style="display:block; width:100%; padding-right: 0">
++                                    <div style="width:400px;height:45px; margin:10px auto" id="AmazonPayButton<!--{$key}-->"></div>
++                                </li>
+                             </ul>
+                         </div>
+                     </form>
+@@ -177,3 +180,4 @@
+         <!--{/if}-->
+     </div>
+ </div>
++<!--{include $tpl_cart_button}-->
+diff --git a/data/class/pages/cart/LC_Page_Cart.php b/data/class/pages/cart/LC_Page_Cart.php
+index 102ab10..9f5bbe4 100644
+--- a/data/class/pages/cart/LC_Page_Cart.php
++++ b/data/class/pages/cart/LC_Page_Cart.php
+@@ -215,6 +215,17 @@ class LC_Page_Cart extends LC_Page_Ex
+ 
+         // 全てのカートの内容を取得する
+         $this->cartItems = $objCartSess->getAllCartList();
++
++        if (isset($_SESSION['amazonpay_error'])) {
++            $this->tpl_message = 'Amazon Pay のお支払い中にエラーが発生しました。恐れ入りますが、別のお支払い方法をご利用ください。';
++            unset($_SESSION['amazonpay_error']);
++        }
++
++        $amazonpay_config = SC_Helper_AmazonPay::getConfig();
++        $objAmazonPay = new SC_Helper_AmazonPay();
++        $this->payload = SC_Helper_AmazonPay::generatePayloadByCart($this->cartKeys);
++        $this->signature = $objAmazonPay->generateSignatureByCart($this->payload);
++        $this->tpl_cart_button = SC_Helper_AmazonPay::getTemplatePath('cart-button');
+     }
+ 
+     /**
