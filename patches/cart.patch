@@ -17,6 +17,35 @@ index 657b889..6a7c187 100644
      </div>
  </div>
 +<!--{include $tpl_cart_button}-->
+diff --git a/data/Smarty/templates/default/shopping/payment.tpl b/data/Smarty/templates/default/shopping/payment.tpl
+index 33c8099..c68f0b5 100644
+--- a/data/Smarty/templates/default/shopping/payment.tpl
++++ b/data/Smarty/templates/default/shopping/payment.tpl
+@@ -179,6 +179,15 @@
+                         </tr>
+                     </thead>
+                     <tbody>
++                        <!--{if $arrForm[$key].value == "SC_Helper_AmazonPay::PAYMENT_ID"|constant}-->
++                        <tr>
++                            <td class="alignC"><input type="radio" id="pay_1" name="<!--{$key}-->"  value="<!--{$arrForm.payment_id.value|h}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" checked="checked" /></td>
++                            <td>
++                                <label for="pay_1">Amazon Pay</label>
++                            </td>
++                        </tr>
++                        <!--{else}-->
++                        <!--{if $arrPayment[cnt].payment_id != "SC_Helper_AmazonPay::PAYMENT_ID"|constant}-->
+                         <!--{section name=cnt loop=$arrPayment}-->
+                             <tr>
+                             <td class="alignC"><input type="radio" id="pay_<!--{$smarty.section.cnt.iteration}-->" name="<!--{$key}-->"  value="<!--{$arrPayment[cnt].payment_id}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" <!--{$arrPayment[cnt].payment_id|sfGetChecked:$arrForm[$key].value}--> /></td>
+@@ -194,6 +203,8 @@
+                             <!--{/if}-->
+                             </tr>
+                         <!--{/section}-->
++                        <!--{/if}-->
++                        <!--{/if}-->
+                     </tbody>
+                 </table>
+             </div>
 diff --git a/data/class/pages/cart/LC_Page_Cart.php b/data/class/pages/cart/LC_Page_Cart.php
 index 102ab10..9f5bbe4 100644
 --- a/data/class/pages/cart/LC_Page_Cart.php
