@@ -61,6 +61,7 @@ class LC_Page_Shopping_AmazonPay extends LC_Page_Cart_Ex
                     $arrBuyer = $objAmazonPay->getCheckoutSession($checkoutSessionId);
                     SC_Helper_AmazonPay::log('buyer: '.print_r($arrBuyer, true));
                     $arrOrder = SC_Helper_AmazonPay::buyerToArrayOfOrder($arrBuyer, ['memo04' => $checkoutSessionId]);
+                    $arrOrder['update_date'] = 'CURRENT_TIMESTAMP'; // XXX null になってしまう場合がある
                     $arrShippings = SC_Helper_AmazonPay::buyerToArrayOfShipping($arrBuyer);
                     $objPurchase->saveShippingTemp($arrShippings);
                     $objPurchase->setShipmentItemTempForSole($objCartSess);

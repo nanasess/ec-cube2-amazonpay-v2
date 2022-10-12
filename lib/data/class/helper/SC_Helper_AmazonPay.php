@@ -11,7 +11,7 @@ class SC_Helper_AmazonPay
     /** @var string */
     const MODULE_CODE = 'amazonpay_v2';
     /** @var string */
-    const LOG_FILE = __DIR__.'/../../logs/amazonpay.log';
+    const LOG_FILE = DATA_REALDIR.'logs/amazonpay.log';
     /** @var string */
     const TEMPLATE_REALDIR = __DIR__.'/../../../templates';
 
@@ -174,6 +174,12 @@ class SC_Helper_AmazonPay
             }
         }
         $arrOrder['memo07'] = $buyer['paymentPreferences'][0]['paymentDescriptor'];
+        $objCustomer = new SC_Customer_Ex();
+        if ($objCustomer->isLoginSuccess(true)) {
+            $arrOrder['customer_id'] = $objCustomer->getValue('customer_id');
+        } else {
+            $arrOrder['customer_id'] = 0;
+        }
 
         return $arrOrder;
     }
