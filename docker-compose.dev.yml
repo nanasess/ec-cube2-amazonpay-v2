@@ -8,9 +8,10 @@ services:
       composer require nanasess/ec-cube2-amazonpay-v2 "dev-main@dev" --ignore-platform-req=php -W &&
       cp ../composer/lib/html/shopping/amazonpay.php html/shopping &&
       patch -p1 < ../composer/patches/cart.patch &&
+      if [ $${DB_TYPE} == 'pgsql' ]; then /wait-for-pgsql.sh ls; else /wait-for-mysql.sh ls; fi &&
       export PGPASSWORD=$${DB_PASSWORD} &&
-      if [ $${DB_TYPE} == 'pgsql' ]; then cat ../composer/sql/setup.sql | psql -U $${DB_USER} -h $${DB_SERVER} $${DB_NAME}; else mysql -u $${DB_USER} -p$${DB_PASSWORD} -h $${DB_SERVER} $${DB_NAME} < ../composer/sql/setup.sql; fi &&
-      if [ $${DB_TYPE} == 'pgsql' ]; then /wait-for-pgsql.sh apache2-foreground; else /wait-for-mysql.sh apache2-foreground; fi
+      if [ $${DB_TYPE} == 'pgsql' ]; then cat ../composer/sql/setup.sql | psql -v -U $${DB_USER} -h $${DB_SERVER} -d $${DB_NAME}; else mysql -u $${DB_USER} -p$${DB_PASSWORD} -h $${DB_SERVER} $${DB_NAME} < ../composer/sql/setup.sql; fi &&
+      apache2-foreground
       "
     volumes:
       - ".:/var/www/composer:delegated"
