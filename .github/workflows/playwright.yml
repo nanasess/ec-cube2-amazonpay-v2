@@ -1,0 +1,36 @@
+name: Playwright Tests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - name: Setup environment
+      run: echo "COMPOSE_FILE=docker-compose.yml:docker-compose.pgsql.yml:docker-compose.dev.yml:docker-compose.ci.yml" >> $GITHUB_ENV
+    - name: Setup EC-CUBE
+      env:
+        AMAZONPAY_PUBLIC_KEY_ID: ${{ secrets.AMAZONPAY_PUBLIC_KEY_ID }}
+        AMAZONPAY_STORE_ID: ${{ secrets.AMAZONPAY_STORE_ID }}
+        AMAZONPAY_MERCHANT_ID: ${{ secrets.AMAZONPAY_MERCHANT_ID }}
+        AMAZONPAY_PRIVATE_KEY: ${{ secrets.AMAZONPAY_PRIVATE_KEY }}
+      run: docker compose up -d
+    - name: Install dependencies
+      run: yarn
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: yarn playwright test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30

@@ -1,0 +1,12 @@
+{
+  "name": "ec-cube2-amazonpay-v2",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:nanasess/ec-cube2-amazonpay-v2.git",
+  "author": "Kentaro Ohkouchi <nanasess@fsm.ne.jp>",
+  "license": "LGPL",
+  "devDependencies": {
+    "@playwright/test": "^1.27.1"
+  },
+  "scripts": {}
+}
