@@ -30,6 +30,8 @@ jobs:
       env:
         CI: 1
         FORCE_COLOR: 1
+        SANDBOX_BUYER_ACCOUNT: ${{ secrets.SANDBOX_BUYER_ACCOUNT }}
+        SANDBOX_BUYER_PASSWORD: ${{ secrets.SANDBOX_BUYER_PASSWORD }}
       run: yarn playwright test
     - uses: actions/upload-artifact@v3
       if: always()

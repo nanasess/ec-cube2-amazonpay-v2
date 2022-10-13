@@ -97,7 +97,7 @@ class LC_Page_Shopping_AmazonPay extends LC_Page_Cart_Ex
                     ],
                     'merchantMetadata' => [
                         'merchantReferenceId' => $arrOrder['order_id'],
-                        'merchantStoreName' => 'あかばね金物.オンライン',
+                        'merchantStoreName' => 'EC-CUBE2', // TODO
                     ]
                 ];
 
