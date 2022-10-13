@@ -68,3 +68,37 @@ index 102ab10..9f5bbe4 100644
      }
  
      /**
+diff --git a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php b/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
+index eacb1bc..244a06d 100644
+--- a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
++++ b/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
+@@ -139,6 +139,7 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
+ 
+         // 決済モジュールを使用するかどうか
+         $this->use_module = SC_Helper_Payment_Ex::useModule($this->arrForm['payment_id']);
++        $arrPayment = SC_Helper_Payment_Ex::get($this->arrForm['payment_id']);
+ 
+         switch ($this->getMode()) {
+             // 前のページに戻る
+@@ -166,6 +167,9 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
+                     $objPurchase->completeOrder(ORDER_PENDING);
+ 
+                     SC_Response_Ex::sendRedirect(SHOPPING_MODULE_URLPATH);
++                } elseif ($arrPayment['module_code'] == SC_Helper_AmazonPay::MODULE_CODE) {
++                    $objPurchase->completeOrder(ORDER_PENDING);
++                    SC_Response_Ex::sendRedirect('/shopping/amazonpay.php', ['mode' => 'updateCheckout']);
+                 // 購入完了ページ
+                 } else {
+                     $objPurchase->completeOrder(ORDER_NEW);
+diff --git a/html/shopping/amazonpay.php b/html/shopping/amazonpay.php
+new file mode 100755
+index 0000000..36d4946
+--- /dev/null
++++ b/html/shopping/amazonpay.php
+@@ -0,0 +1,6 @@
++<?php
++require_once '../require.php';
++
++$objPage = new LC_Page_Shopping_AmazonPay();
++$objPage->init();
++$objPage->process();
