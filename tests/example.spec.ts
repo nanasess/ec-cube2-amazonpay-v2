@@ -11,6 +11,10 @@ test('homepage has Playwright in title and get started link linking to the intro
   await page.getByLabel('パスワード').fill('jp-amazonpay-tester@amazon.co.jp');
   await page.getByRole('button', { name: 'ログイン' }).click();
   await page.locator('input[type="submit"]').click();
-  await page.getByRole('button', { name: '次へ' }).click();
+  await page.getByRole('button', { name: '次へ' }).click(
+    {
+      timeout: 100000,
+    }
+  );
   await page.locator('input[name="next-top"]').click();
 });
