@@ -1,13 +1,15 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
+  pull_request_target:
+    types: [labeled]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
