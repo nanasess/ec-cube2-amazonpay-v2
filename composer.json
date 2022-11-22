@@ -31,7 +31,7 @@
     "require-dev": {
         "ec-cube/ec-cube2": "dev-master@dev",
         "nanasess/ec-cube2-class-extends-stubs": "^1.0",
-        "phpunit/phpunit": "^8.4"
+        "phpunit/phpunit": "^8.4 || ^9.0"
     },
     "repositories": [
         {
