@@ -10,7 +10,7 @@ test('homepage has Playwright in title and get started link linking to the intro
   await page.getByLabel('Eメールアドレス').fill(process.env.SANDBOX_BUYER_ACCOUNT);
   await page.getByLabel('パスワード').fill(process.env.SANDBOX_BUYER_PASSWORD);
   await page.getByRole('button', { name: 'ログイン' }).click();
-  await page.locator('input[type="submit"]').click();
+  await page.locator('input[type="submit"]#signInSubmit').click();
   await page.getByRole('button', { name: '次へ' }).click(
     {
       timeout: 300000,
