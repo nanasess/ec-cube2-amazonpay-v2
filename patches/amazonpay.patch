@@ -1,3 +1,23 @@
+diff --git a/data/Smarty/templates/admin/order/edit.tpl b/data/Smarty/templates/admin/order/edit.tpl
+index 35a9b8c..c9af303 100644
+--- a/data/Smarty/templates/admin/order/edit.tpl
++++ b/data/Smarty/templates/admin/order/edit.tpl
+@@ -768,7 +768,14 @@
+                     </select>
+                 </td>
+             </tr>
+-
++            <!--{if $arrForm[$key].value == constant('SC_Helper_AmazonPay::PAYMENT_ID')}-->
++            <tr>
++                <th>AmazonリファレンスID</th>
++                <td>
++                    <a href="https://sellercentral.amazon.co.jp/external-payments/pmd/payment-details?orderReferenceId=<!--{$arrForm.memo05.value|h}-->" target="_blank"><!--{$arrForm.memo05.value|h}--></a>
++                </td>
++            </tr>
++            <!--{/if}-->
+             <!--{if !empty($arrForm.payment_info)}-->
+             <tr>
+                 <th><!--{$arrForm.payment_type}-->情報</th>
 diff --git a/data/Smarty/templates/default/cart/index.tpl b/data/Smarty/templates/default/cart/index.tpl
 index 657b889..6a7c187 100644
 --- a/data/Smarty/templates/default/cart/index.tpl
@@ -17,6 +37,43 @@ index 657b889..6a7c187 100644
      </div>
  </div>
 +<!--{include $tpl_cart_button}-->
+diff --git a/data/Smarty/templates/default/shopping/confirm.tpl b/data/Smarty/templates/default/shopping/confirm.tpl
+index edc5ae1..d4a980f 100644
+--- a/data/Smarty/templates/default/shopping/confirm.tpl
++++ b/data/Smarty/templates/default/shopping/confirm.tpl
+@@ -238,6 +238,7 @@
+             <!--{* ▼お届け先 *}-->
+             <!--{foreach item=shippingItem from=$arrShipping name=shippingItem}-->
+                 <h3>お届け先<!--{if $is_multiple}--><!--{$smarty.foreach.shippingItem.iteration}--><!--{/if}--></h3>
++                <!--{if !empty($arrForm['memo07'])}--> <p><a href="javascript:;" id="changeButton1"><strong>お届け先を変更する</strong></a></p><!--{/if}-->
+                 <!--{if $is_multiple}-->
+                     <table summary="ご注文内容確認">
+                         <col width="10%" />
+@@ -348,7 +349,7 @@
+                 </tr>
+                 <tr>
+                     <th scope="row">お支払方法</th>
+-                    <td><!--{$arrForm.payment_method|h}--></td>
++                    <td><!--{if !empty($arrForm['memo07'])}--> <!--{$arrForm['memo07']|h}--> <a href="javascript:;" id="changeButton2" style="color:#006aa6;"><i class="fa-solid fa-arrow-up-right-from-square"></i> お支払い方法を変更する</a><!--{else}--><!--{$arrForm.payment_method|h}--> <!--{/if}--></td>
+                 </tr>
+                 <tr>
+                     <th scope="row">その他お問い合わせ</th>
+@@ -376,3 +377,15 @@
+         </form>
+     </div>
+ </div>
++<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script type="text/javascript" charset="utf-8">
++ amazon.Pay.bindChangeAction('#changeButton1', {
++     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
++     changeAction: 'changeAddress'
++ });
++ amazon.Pay.bindChangeAction('#changeButton2', {
++     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
++     changeAction: 'changePayment'
++ });
++</script>
++
 diff --git a/data/Smarty/templates/default/shopping/payment.tpl b/data/Smarty/templates/default/shopping/payment.tpl
 index 33c8099..c68f0b5 100644
 --- a/data/Smarty/templates/default/shopping/payment.tpl
@@ -46,6 +103,104 @@ index 33c8099..c68f0b5 100644
                      </tbody>
                  </table>
              </div>
+diff --git a/data/Smarty/templates/sphone/cart/index.tpl b/data/Smarty/templates/sphone/cart/index.tpl
+index 6d6859e..66745c8 100644
+--- a/data/Smarty/templates/sphone/cart/index.tpl
++++ b/data/Smarty/templates/sphone/cart/index.tpl
+@@ -149,6 +149,9 @@
+                             <div class="btn_area_btm">
+                                 <input type="submit" value="ご購入手続きへ" name="confirm" class="btn data-role-none" />
+                             </div>
++                            <div class="btn_area_btm">
++                                <div id="AmazonPayButton<!--{$key}-->" style="text-align: center"></div>
++                            </div>
+                         <!--{/if}-->
+                     </div><!-- /.formBox -->
+                 </form>
+@@ -165,4 +168,5 @@
+ 
+ <!--{include file= 'frontparts/search_area.tpl'}-->
+ 
++<!--{include $tpl_cart_button}-->
+ <!--▲コンテンツここまで -->
+diff --git a/data/Smarty/templates/sphone/shopping/confirm.tpl b/data/Smarty/templates/sphone/shopping/confirm.tpl
+index 1e6943c..8d111ec 100644
+--- a/data/Smarty/templates/sphone/shopping/confirm.tpl
++++ b/data/Smarty/templates/sphone/shopping/confirm.tpl
+@@ -195,6 +195,7 @@
+             <section class="delivconfirm_area">
+                 <h3 class="subtitle">お届け先</h3>
+ 
++                <!--{if !empty($arrForm['memo07'])}--> <p><a href="javascript:;" id="changeButton1"><strong>お届け先を変更する</strong></a></p><!--{/if}-->
+                 <div class="form_area">
+ 
+                     <!--{foreach item=shippingItem from=$arrShipping name=shippingItem}-->
+@@ -272,7 +273,7 @@
+                         <em>配送方法</em>：<!--{$arrDeliv[$arrForm.deliv_id]|h}-->
+                     </div>
+                     <div class="innerBox">
+-                        <em>お支払方法：</em><!--{$arrForm.payment_method|h}-->
++                        <em>お支払方法：</em><!--{if !empty($arrForm['memo07'])}--><!--{$arrForm['memo07']|h}--><br> <a href="javascript:;" id="changeButton2">お支払い方法を変更する</a><!--{else}--><!--{$arrForm.payment_method|h}--> <!--{/if}-->
+                     </div>
+                     <div class="innerBox">
+                         <em>その他お問い合わせ：</em><br />
+@@ -299,4 +300,15 @@
+ 
+ <!--{include file= 'frontparts/search_area.tpl'}-->
+ 
++<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script type="text/javascript" charset="utf-8">
++  amazon.Pay.bindChangeAction('#changeButton1', {
++     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
++     changeAction: 'changeAddress'
++ });
++ amazon.Pay.bindChangeAction('#changeButton2', {
++     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
++     changeAction: 'changePayment'
++ });
++</script>
+ <!--▲コンテンツここまで -->
+diff --git a/data/Smarty/templates/sphone/shopping/payment.tpl b/data/Smarty/templates/sphone/shopping/payment.tpl
+index 6abe5d5..f6e1863 100644
+--- a/data/Smarty/templates/sphone/shopping/payment.tpl
++++ b/data/Smarty/templates/sphone/shopping/payment.tpl
+@@ -157,6 +157,15 @@
+             <!--{/if}-->
+             <p class="non-select-msg information">まずはじめに、配送方法を選択ください。</p>
+             <ul id="payment">
++                <!--{if $arrForm[$key].value == "SC_Helper_AmazonPay::PAYMENT_ID"|constant}-->
++                        <tr>
++                            <td class="alignC"><input type="radio" id="pay_1" name="<!--{$key}-->"  value="<!--{$arrForm.payment_id.value|h}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" checked="checked" /></td>
++                            <td>
++                                <label for="pay_1">Amazon Pay</label>
++                            </td>
++                        </tr>
++                        <!--{else}-->
++                        <!--{if $arrPayment[cnt].payment_id != "SC_Helper_AmazonPay::PAYMENT_ID"|constant}-->
+                 <!--{section name=cnt loop=$arrPayment}-->
+                     <li>
+                         <input type="radio" id="pay_<!--{$smarty.section.cnt.iteration}-->" name="<!--{$key}-->" value="<!--{$arrPayment[cnt].payment_id}-->" style="<!--{$arrErr[$key]|sfGetErrorColor}-->" <!--{$arrPayment[cnt].payment_id|sfGetChecked:$arrForm[$key].value}--> class="data-role-none" />
+@@ -168,6 +177,8 @@
+                         <!--{/if}-->
+                     </li>
+                 <!--{/section}-->
++                <!--{/if}-->
++                <!--{/if}-->
+             </ul>
+         </section>
+ 
+diff --git a/data/class/pages/admin/order/LC_Page_Admin_Order_Edit.php b/data/class/pages/admin/order/LC_Page_Admin_Order_Edit.php
+index b7c80c3..7ff26f9 100644
+--- a/data/class/pages/admin/order/LC_Page_Admin_Order_Edit.php
++++ b/data/class/pages/admin/order/LC_Page_Admin_Order_Edit.php
+@@ -393,6 +393,7 @@ class LC_Page_Admin_Order_Edit extends LC_Page_Admin_Order_Ex
+         $objFormParam->addParam('お支払い方法', 'payment_id', INT_LEN, 'n', array('EXIST_CHECK', 'MAX_LENGTH_CHECK', 'NUM_CHECK'));
+         $objFormParam->addParam('対応状況', 'status', INT_LEN, 'n', array('EXIST_CHECK', 'MAX_LENGTH_CHECK', 'NUM_CHECK'));
+         $objFormParam->addParam('お支払方法名称', 'payment_method');
++        $objFormParam->addParam('AmazonリファレンスID', 'memo05');
+ 
+         // 受注詳細情報
+         $objFormParam->addParam('商品種別ID', 'product_type_id', INT_LEN, 'n', array('EXIST_CHECK', 'MAX_LENGTH_CHECK', 'NUM_CHECK'), '0');
 diff --git a/data/class/pages/cart/LC_Page_Cart.php b/data/class/pages/cart/LC_Page_Cart.php
 index 102ab10..9f5bbe4 100644
 --- a/data/class/pages/cart/LC_Page_Cart.php
