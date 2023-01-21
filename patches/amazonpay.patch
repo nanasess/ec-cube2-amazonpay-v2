@@ -74,6 +74,47 @@ index edc5ae1..d4a980f 100644
 + });
 +</script>
 +
+diff --git a/data/Smarty/templates/default/shopping/index.tpl b/data/Smarty/templates/default/shopping/index.tpl
+index 169d7b6..51b8117 100644
+--- a/data/Smarty/templates/default/shopping/index.tpl
++++ b/data/Smarty/templates/default/shopping/index.tpl
+@@ -19,7 +19,7 @@
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+  *}-->
+-
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
+ <div id="undercolumn">
+     <div id="undercolumn_login">
+         <h2 class="title"><!--{$tpl_title|h}--></h2>
+@@ -28,6 +28,27 @@
+             <input type="hidden" name="mode" value="login" />
+ 
+             <div class="login_area">
++                <h3>Amazonのアカウントをお持ちのお客様</h3>
++                <div id="AmazonLoginButton"></div>
++                    <script>
++     amazon.Pay.renderButton('#AmazonLoginButton', {
++         // set checkout environment
++         merchantId: '<!--{$smarty.env.AMAZONPAY_MERCHANT_ID|h}-->',
++         ledgerCurrency: 'JPY',
++         sandbox: Boolean('<!--{$smarty.env.AMAZONPAY_SANDBOX|h}-->'),
++         // customize the buyer experience
++         checkoutLanguage: 'ja_JP',
++         productType: 'SignIn',
++         placement: 'Other',
++         buttonColor: 'Gold',
++         // configure Create Checkout Session request
++         signInConfig: {
++             payloadJSON: '<!--{$payload|json_encode}-->', // string generated in step 2
++             signature: '<!--{$signature}-->',
++             publicKeyId: '<!--{$smarty.env.AMAZONPAY_PUBLIC_KEY_ID|h}-->'
++         }
++     });
++    </script>
+                 <h3>会員登録がお済みのお客様</h3>
+                 <p class="inputtext">会員の方は、登録時に入力されたメールアドレスとパスワードでログインしてください。</p>
+                 <div class="inputbox">
 diff --git a/data/Smarty/templates/default/shopping/payment.tpl b/data/Smarty/templates/default/shopping/payment.tpl
 index 33c8099..c68f0b5 100644
 --- a/data/Smarty/templates/default/shopping/payment.tpl
@@ -223,6 +264,34 @@ index 102ab10..9f5bbe4 100644
      }
  
      /**
+diff --git a/data/class/pages/shopping/LC_Page_Shopping.php b/data/class/pages/shopping/LC_Page_Shopping.php
+index 0ebf40b..4cbf74c 100644
+--- a/data/class/pages/shopping/LC_Page_Shopping.php
++++ b/data/class/pages/shopping/LC_Page_Shopping.php
+@@ -248,6 +248,23 @@ class LC_Page_Shopping extends LC_Page_Ex
+                 } else {
+                     // 通常はログインページ
+                     $this->lfInitLoginFormParam($objFormParam);
++
++                    $amazonpay_config = SC_Helper_AmazonPay::getConfig();
++                    $objAmazonPay = new SC_Helper_AmazonPay();
++                    $this->payload = SC_Helper_AmazonPay::generatePayloadByLogin(SHOPPING_URL);
++                    $this->signature = $objAmazonPay->generateSignature($this->payload);
++
++                    if (!empty($_GET['buyerToken'])) {
++                        $buyer = $objAmazonPay->getBuyer($_GET['buyerToken']);
++                        $objAmazonPay->registerCustomer($buyer, $buyer['buyerId']);
++                        $objCustomer->setLogin($buyer['email']);
++
++                        SC_Response_Ex::sendRedirect(
++                            $this->getNextLocation($this->cartKey, $this->tpl_uniqid,
++                                                   $objCustomer, $objPurchase,
++                                                   $objSiteSess));
++                        SC_Response_Ex::actionExit();
++                    }
+                 }
+ 
+                 $this->setFormParams($objFormParam, $objPurchase, $this->tpl_uniqid);
 diff --git a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php b/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
 index eacb1bc..244a06d 100644
 --- a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
