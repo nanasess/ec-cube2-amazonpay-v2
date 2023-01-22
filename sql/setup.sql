@@ -5,3 +5,4 @@ VALUES(999998, 'Amazon Pay', 0, 0, 3, NULL, 2, 1, 0, 1, CURRENT_TIMESTAMP, CURRE
 INSERT INTO dtb_payment_options (deliv_id, payment_id, rank) VALUES (1, 999998, 5);
 ALTER TABLE dtb_customer ADD amazonpay_buyer_id text;
 CREATE INDEX dtb_customer_amazonpay_buyer_id_idx ON dtb_customer (amazonpay_buyer_id);
+ALTER TABLE dtb_other_deliv ADD amazonpay_shipping_address_flg smallint;

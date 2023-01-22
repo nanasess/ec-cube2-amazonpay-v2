@@ -401,10 +401,33 @@ class SC_Helper_AmazonPay
         $arrCustomer['status'] = 2;
 
         $existCustomer = $this->findCustomer($buyer_id);
+
         if (empty($existCustomer)) {
-            SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer);
+            $arrCustomer['customer_id'] = SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer);
         } else {
-            SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer, $arrCustomer['customer_id']);
+            $arrCustomer['customer_id'] = SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer, $existCustomer['customer_id']);
         }
+
+        $arrOtherDeliv = $objQuery->getRow('*', 'dtb_other_deliv', 'customer_id = ? AND amazonpay_shipping_address_flg = ?', [$arrCustomer['customer_id'], 1]);
+
+        if (array_key_exists('shippingAddress', $buyer)) {
+            $arrOtherDeliv['name01'] = $buyer['shippingAddress']['name'];
+            $arrOtherDeliv['name02'] = '';
+
+            list($arrOtherDeliv['zip01'], $arrOtherDeliv['zip02']) = explode('-', $buyer['shippingAddress']['postalCode']);
+            $arrOtherDeliv['pref'] = self::convertToPrefId($buyer['shippingAddress']['stateOrRegion']);
+            $arrOtherDeliv['addr01'] = $buyer['shippingAddress']['city'].$buyer['shippingAddress']['addressLine1'];
+            $arrOtherDeliv['addr02'] = $buyer['shippingAddress']['addressLine2'];
+            $arrOtherDeliv['company_name'] = $buyer['shippingAddress']['addressLine3'];
+            if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
+                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['shippingAddress']['phoneNumber']);
+                list($arrOtherDeliv['tel01'], $arrOtherDeliv['tel02'], $arrOtherDeliv['tel03']) = str_split($phone, 4);
+            }
+        }
+        $arrOtherDeliv['amazonpay_shipping_address_flg'] = 1;
+        $arrOtherDeliv['customer_id'] = $arrCustomer['customer_id'];
+
+        $objAddress = new SC_Helper_Address_Ex();
+        $objAddress->registAddress($arrOtherDeliv);
     }
 }
