@@ -373,10 +373,10 @@ class SC_Helper_AmazonPay
         return json_decode($result['response'], true);
     }
 
-    public function findCustomer(string $buyer_id): ?array
+    public function findCustomer(string $buyer_id, string $email): ?array
     {
         $objQuery = SC_Query_Ex::getSingletonInstance();
-        return $objQuery->getRow('*', 'dtb_customer', 'amazonpay_buyer_id = ?', [$buyer_id]);
+        return $objQuery->getRow('*', 'dtb_customer', '(amazonpay_buyer_id = ? OR email = ?) AND del_flg = 0 ', [$buyer_id, $email]);
     }
 
     public function registerCustomer(array $buyer, string $buyer_id): void
@@ -400,7 +400,7 @@ class SC_Helper_AmazonPay
         $arrCustomer['secret_key'] = SC_Helper_Customer_Ex::sfGetUniqSecretKey();
         $arrCustomer['status'] = 2;
 
-        $existCustomer = $this->findCustomer($buyer_id);
+        $existCustomer = $this->findCustomer($buyer_id, $arrCustomer['email']);
 
         if (empty($existCustomer)) {
             $arrCustomer['customer_id'] = SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer);
