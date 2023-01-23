@@ -9,8 +9,8 @@ class LC_Page_Shopping_AmazonPay extends LC_Page_Cart_Ex
      */
     public function init()
     {
-        parent::init();
         $this->skip_load_page_layout = true;
+        parent::init();
         $masterData = new SC_DB_MasterData_Ex();
         $this->arrPref = $masterData->getMasterData('mtb_pref');
     }
