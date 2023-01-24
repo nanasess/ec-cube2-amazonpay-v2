@@ -33,7 +33,7 @@ class SC_Helper_AmazonPay
         return [
             'public_key_id' => (string)getenv('AMAZONPAY_PUBLIC_KEY_ID'),
             'private_key'   => (string)getenv('AMAZONPAY_PRIVATE_KEY'),
-            'region'        => (string)getenv('AMAZONPAY_REGION'),
+            'region'        => (string)strtolower(getenv('AMAZONPAY_REGION')),
             'sandbox'       => (bool)getenv('AMAZONPAY_SANDBOX')
         ];
     }

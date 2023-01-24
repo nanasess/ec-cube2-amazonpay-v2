@@ -38,7 +38,7 @@ index 657b889..6a7c187 100644
  </div>
 +<!--{include $tpl_cart_button}-->
 diff --git a/data/Smarty/templates/default/shopping/confirm.tpl b/data/Smarty/templates/default/shopping/confirm.tpl
-index edc5ae1..703b9f6 100644
+index edc5ae1..4540f4a 100644
 --- a/data/Smarty/templates/default/shopping/confirm.tpl
 +++ b/data/Smarty/templates/default/shopping/confirm.tpl
 @@ -60,7 +60,11 @@
@@ -71,11 +71,11 @@ index edc5ae1..703b9f6 100644
                  </tr>
                  <tr>
                      <th scope="row">その他お問い合わせ</th>
-@@ -376,3 +381,16 @@
+@@ -376,3 +381,17 @@
          </form>
      </div>
  </div>
-+<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
 +<script type="text/javascript" charset="utf-8">
 + amazon.Pay.bindChangeAction('#changeButton1', {
 +     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
@@ -86,8 +86,9 @@ index edc5ae1..703b9f6 100644
 +     changeAction: 'changePayment'
 + });
 +</script>
-+
-+<!--{include $tpl_cart_button}-->
++<!--{if $renderAmazonPayButton}-->
++    <!--{include $tpl_cart_button}-->
++<!--{/if}-->
 diff --git a/data/Smarty/templates/default/shopping/index.tpl b/data/Smarty/templates/default/shopping/index.tpl
 index 169d7b6..51b8117 100644
 --- a/data/Smarty/templates/default/shopping/index.tpl
@@ -179,7 +180,7 @@ index 6d6859e..66745c8 100644
 +<!--{include $tpl_cart_button}-->
  <!--▲コンテンツここまで -->
 diff --git a/data/Smarty/templates/sphone/shopping/confirm.tpl b/data/Smarty/templates/sphone/shopping/confirm.tpl
-index 1e6943c..8d111ec 100644
+index 1e6943c..8770fd8 100644
 --- a/data/Smarty/templates/sphone/shopping/confirm.tpl
 +++ b/data/Smarty/templates/sphone/shopping/confirm.tpl
 @@ -195,6 +195,7 @@
@@ -203,7 +204,7 @@ index 1e6943c..8d111ec 100644
  
  <!--{include file= 'frontparts/search_area.tpl'}-->
  
-+<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
 +<script type="text/javascript" charset="utf-8">
 +  amazon.Pay.bindChangeAction('#changeButton1', {
 +     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
