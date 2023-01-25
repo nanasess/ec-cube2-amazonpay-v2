@@ -322,6 +322,19 @@ class SC_Helper_AmazonPay
         return $path;
     }
 
+    public static function generatePayloadByCheckout(string $key = ''): array
+    {
+        return [
+            'webCheckoutDetails' => [
+                'checkoutReviewReturnUrl' => HTTPS_URL.'shopping/amazonpay.php?mode=processCheckout&cartKey='.$key
+            ],
+            'paymentDetails' => [
+                'allowOvercharge' => true
+            ],
+            'storeId' => getenv('AMAZONPAY_STORE_ID'),
+            'scopes' => ['name', 'email', 'phoneNumber', 'billingAddress']
+        ];
+    }
     /**
      * @param int[] $cartKeys
      */
@@ -329,16 +342,7 @@ class SC_Helper_AmazonPay
     {
         $payload = [];
         foreach ($cartKeys as $key) {
-            $payload[$key] = [
-                'webCheckoutDetails' => [
-                    'checkoutReviewReturnUrl' => HTTPS_URL.'shopping/amazonpay.php?mode=processCheckout&cartKey='.$key
-                ],
-                'paymentDetails' => [
-                    'allowOvercharge' => true
-                ],
-                'storeId' => getenv('AMAZONPAY_STORE_ID'),
-                'scopes' => ['name', 'email', 'phoneNumber', 'billingAddress']
-            ];
+            $payload[$key] = self::generatePayloadByCheckout($key);
         }
 
         return $payload;
