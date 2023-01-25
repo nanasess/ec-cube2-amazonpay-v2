@@ -19,7 +19,7 @@ index 35a9b8c..c9af303 100644
              <tr>
                  <th><!--{$arrForm.payment_type}-->情報</th>
 diff --git a/data/Smarty/templates/default/cart/index.tpl b/data/Smarty/templates/default/cart/index.tpl
-index 657b889..6a7c187 100644
+index 657b889..127525d 100644
 --- a/data/Smarty/templates/default/cart/index.tpl
 +++ b/data/Smarty/templates/default/cart/index.tpl
 @@ -167,6 +167,9 @@
@@ -32,16 +32,51 @@ index 657b889..6a7c187 100644
                              </ul>
                          </div>
                      </form>
-@@ -177,3 +180,4 @@
+@@ -177,3 +180,6 @@
          <!--{/if}-->
      </div>
  </div>
-+<!--{include $tpl_cart_button}-->
++<!--{if !empty($tpl_cart_button)}-->
++    <!--{include $tpl_cart_button}-->
++<!--{/if}-->
+diff --git a/data/Smarty/templates/default/mypage/login.tpl b/data/Smarty/templates/default/mypage/login.tpl
+index c68babc..82f7aeb 100644
+--- a/data/Smarty/templates/default/mypage/login.tpl
++++ b/data/Smarty/templates/default/mypage/login.tpl
+@@ -31,6 +31,8 @@
+             <input type="hidden" name="url" value="<!--{$smarty.server.REQUEST_URI|h}-->" />
+ 
+             <div class="login_area">
++                <h3>Amazonのアカウントをお持ちのお客様</h3>
++                <div id="AmazonLoginButton" style="width:400px;height:45px; margin:10px auto"></div>
+                 <h3>会員登録がお済みのお客様</h3>
+                 <p class="inputtext">会員の方は、登録時に入力されたメールアドレスとパスワードでログインしてください。</p>
+                 <div class="inputbox">
+@@ -91,3 +93,6 @@
+         </form>
+     </div>
+ </div>
++<!--{if $tpl_mypage_login_button}-->
++    <!--{include $tpl_mypage_login_button}-->
++<!--{/if}-->
 diff --git a/data/Smarty/templates/default/shopping/confirm.tpl b/data/Smarty/templates/default/shopping/confirm.tpl
-index edc5ae1..d4a980f 100644
+index edc5ae1..5d5315b 100644
 --- a/data/Smarty/templates/default/shopping/confirm.tpl
 +++ b/data/Smarty/templates/default/shopping/confirm.tpl
-@@ -238,6 +238,7 @@
+@@ -60,7 +60,11 @@
+                     </li>
+                         <!--{else}-->
+                     <li>
+-                        <input type="image" onclick="return fnCheckSubmit();" class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_order_complete.jpg" alt="ご注文完了ページへ" name="next-top" id="next-top" />
++                        <!--{if $renderAmazonPayButton}-->
++                               <div style="width:400px;height:45px; margin:10px auto" id="AmazonPayButton1"></div>
++                        <!--{else}-->
++                            <input type="image" onclick="return fnCheckSubmit();" class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_order_complete.jpg" alt="ご注文完了ページへ" name="next-top" id="next-top" />
++                        <!--{/if}-->
+                     </li>
+                     <!--{/if}-->
+                 </ul>
+@@ -238,6 +242,7 @@
              <!--{* ▼お届け先 *}-->
              <!--{foreach item=shippingItem from=$arrShipping name=shippingItem}-->
                  <h3>お届け先<!--{if $is_multiple}--><!--{$smarty.foreach.shippingItem.iteration}--><!--{/if}--></h3>
@@ -49,7 +84,7 @@ index edc5ae1..d4a980f 100644
                  <!--{if $is_multiple}-->
                      <table summary="ご注文内容確認">
                          <col width="10%" />
-@@ -348,7 +349,7 @@
+@@ -348,7 +353,7 @@
                  </tr>
                  <tr>
                      <th scope="row">お支払方法</th>
@@ -58,11 +93,24 @@ index edc5ae1..d4a980f 100644
                  </tr>
                  <tr>
                      <th scope="row">その他お問い合わせ</th>
-@@ -376,3 +377,15 @@
+@@ -368,7 +373,11 @@
+                     </li>
+                     <!--{else}-->
+                     <li>
+-                        <input type="image" onclick="return fnCheckSubmit();" class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_order_complete.jpg" alt="ご注文完了ページへ"  name="next" id="next" />
++                        <!--{if $renderAmazonPayButton}-->
++                               <div style="width:400px;height:45px; margin:10px auto" id="AmazonPayButton2"></div>
++                        <!--{else}-->
++                               <input type="image" onclick="return fnCheckSubmit();" class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_order_complete.jpg" alt="ご注文完了ページへ"  name="next" id="next" />
++                        <!--{/if}-->
+                     </li>
+                     <!--{/if}-->
+                 </ul>
+@@ -376,3 +385,18 @@
          </form>
      </div>
  </div>
-+<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
 +<script type="text/javascript" charset="utf-8">
 + amazon.Pay.bindChangeAction('#changeButton1', {
 +     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
@@ -73,7 +121,30 @@ index edc5ae1..d4a980f 100644
 +     changeAction: 'changePayment'
 + });
 +</script>
-+
++<!--{if $renderAmazonPayButton}-->
++    <!--{include file=`$tpl_checkout_button` suffix="1"}-->
++    <!--{include file=`$tpl_checkout_button` suffix="2"}-->
++<!--{/if}-->
+diff --git a/data/Smarty/templates/default/shopping/index.tpl b/data/Smarty/templates/default/shopping/index.tpl
+index 169d7b6..6b43611 100644
+--- a/data/Smarty/templates/default/shopping/index.tpl
++++ b/data/Smarty/templates/default/shopping/index.tpl
+@@ -28,6 +28,8 @@
+             <input type="hidden" name="mode" value="login" />
+ 
+             <div class="login_area">
++                <h3>Amazonのアカウントをお持ちのお客様</h3>
++                <div id="AmazonLoginButton" style="width:400px;height:45px; margin:10px auto"></div>
+                 <h3>会員登録がお済みのお客様</h3>
+                 <p class="inputtext">会員の方は、登録時に入力されたメールアドレスとパスワードでログインしてください。</p>
+                 <div class="inputbox">
+@@ -106,3 +108,6 @@
+         </div>
+     </div>
+ </div>
++<!--{if $tpl_cart_login_button}-->
++    <!--{include $tpl_cart_login_button}-->
++<!--{/if}-->
 diff --git a/data/Smarty/templates/default/shopping/payment.tpl b/data/Smarty/templates/default/shopping/payment.tpl
 index 33c8099..c68f0b5 100644
 --- a/data/Smarty/templates/default/shopping/payment.tpl
@@ -104,7 +175,7 @@ index 33c8099..c68f0b5 100644
                  </table>
              </div>
 diff --git a/data/Smarty/templates/sphone/cart/index.tpl b/data/Smarty/templates/sphone/cart/index.tpl
-index 6d6859e..66745c8 100644
+index 6d6859e..dd2d8c2 100644
 --- a/data/Smarty/templates/sphone/cart/index.tpl
 +++ b/data/Smarty/templates/sphone/cart/index.tpl
 @@ -149,6 +149,9 @@
@@ -117,14 +188,37 @@ index 6d6859e..66745c8 100644
                          <!--{/if}-->
                      </div><!-- /.formBox -->
                  </form>
-@@ -165,4 +168,5 @@
+@@ -164,5 +167,7 @@
+ </section>
  
  <!--{include file= 'frontparts/search_area.tpl'}-->
+-
++<!--{if $tpl_cart_button}-->
++    <!--{include $tpl_cart_button}-->
++<!--{/if}-->
+ <!--▲コンテンツここまで -->
+diff --git a/data/Smarty/templates/sphone/mypage/login.tpl b/data/Smarty/templates/sphone/mypage/login.tpl
+index 9515bb2..eaee9eb 100644
+--- a/data/Smarty/templates/sphone/mypage/login.tpl
++++ b/data/Smarty/templates/sphone/mypage/login.tpl
+@@ -89,9 +89,14 @@
+             </nav>
+             <p>会員登録をすると便利なMyページをご利用いただけます。</p>
+         </div>
++        <div class="login_area_btm">
++            <div id="AmazonLoginButton" style="width:400px;height:45px; margin:10px auto"></div>
++        </div>
+     </form>
+ </section>
+-
++<!--{if $tpl_mypage_login_button}-->
++    <!--{include $tpl_mypage_login_button}-->
++<!--{/if}-->
+ <!--{include file= 'frontparts/search_area.tpl'}-->
  
-+<!--{include $tpl_cart_button}-->
  <!--▲コンテンツここまで -->
 diff --git a/data/Smarty/templates/sphone/shopping/confirm.tpl b/data/Smarty/templates/sphone/shopping/confirm.tpl
-index 1e6943c..8d111ec 100644
+index 1e6943c..2886701 100644
 --- a/data/Smarty/templates/sphone/shopping/confirm.tpl
 +++ b/data/Smarty/templates/sphone/shopping/confirm.tpl
 @@ -195,6 +195,7 @@
@@ -144,11 +238,24 @@ index 1e6943c..8d111ec 100644
                      </div>
                      <div class="innerBox">
                          <em>その他お問い合わせ：</em><br />
-@@ -299,4 +300,15 @@
+@@ -288,7 +289,11 @@
+                 <!--{if $use_module}-->
+                     <li><a rel="external" href="javascript:void(document.form1.submit());" class="btn">次へ</a></li>
+                 <!--{else}-->
+-                    <li><a rel="external" href="javascript:void(document.form1.submit());" class="btn">ご注文完了ページへ</a></li>
++                    <!--{if $renderAmazonPayButton}-->
++                        <li><div style="width:400px;height:45px; margin:10px auto" id="AmazonPayButton1"></div></li>
++                    <!--{else}-->
++                        <li><a rel="external" href="javascript:void(document.form1.submit());" class="btn">ご注文完了ページへ</a></li>
++                    <!--{/if}-->
+                 <!--{/if}-->
+                 <li><a rel="external" href="./payment.php" class="btn_back">戻る</a></li>
+             </ul>
+@@ -299,4 +304,18 @@
  
  <!--{include file= 'frontparts/search_area.tpl'}-->
  
-+<script src="https://static-na.payments-amazon.com/checkout.js"></script>
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
 +<script type="text/javascript" charset="utf-8">
 +  amazon.Pay.bindChangeAction('#changeButton1', {
 +     amazonCheckoutSessionId: '<!--{$arrForm['memo04']|h}-->',
@@ -160,6 +267,28 @@ index 1e6943c..8d111ec 100644
 + });
 +</script>
  <!--▲コンテンツここまで -->
++<!--{if $renderAmazonPayButton}-->
++    <!--{include file=`$tpl_checkout_button` suffix="1"}-->
++<!--{/if}-->
+diff --git a/data/Smarty/templates/sphone/shopping/index.tpl b/data/Smarty/templates/sphone/shopping/index.tpl
+index fab7197..ed72a6f 100644
+--- a/data/Smarty/templates/sphone/shopping/index.tpl
++++ b/data/Smarty/templates/sphone/shopping/index.tpl
+@@ -88,8 +88,13 @@
+             </nav>
+             <p class="message">会員登録をすると便利なMyページをご利用いただけます。</p>
+         </div>
++        <div class="login_area_btm">
++            <div id="AmazonLoginButton" style="width:400px;height:45px; margin:10px auto"></div>
++        </div>
+     </form>
+ </section>
+-
++<!--{if $tpl_cart_login_button}-->
++    <!--{include $tpl_cart_login_button}-->
++<!--{/if}-->
+ <!--{include file= 'frontparts/search_area.tpl'}-->
+ 
 diff --git a/data/Smarty/templates/sphone/shopping/payment.tpl b/data/Smarty/templates/sphone/shopping/payment.tpl
 index 6abe5d5..f6e1863 100644
 --- a/data/Smarty/templates/sphone/shopping/payment.tpl
@@ -202,10 +331,10 @@ index b7c80c3..7ff26f9 100644
          // 受注詳細情報
          $objFormParam->addParam('商品種別ID', 'product_type_id', INT_LEN, 'n', array('EXIST_CHECK', 'MAX_LENGTH_CHECK', 'NUM_CHECK'), '0');
 diff --git a/data/class/pages/cart/LC_Page_Cart.php b/data/class/pages/cart/LC_Page_Cart.php
-index 102ab10..9f5bbe4 100644
+index 102ab10..141d8de 100644
 --- a/data/class/pages/cart/LC_Page_Cart.php
 +++ b/data/class/pages/cart/LC_Page_Cart.php
-@@ -215,6 +215,17 @@ class LC_Page_Cart extends LC_Page_Ex
+@@ -215,6 +215,16 @@ class LC_Page_Cart extends LC_Page_Ex
  
          // 全てのカートの内容を取得する
          $this->cartItems = $objCartSess->getAllCartList();
@@ -215,7 +344,6 @@ index 102ab10..9f5bbe4 100644
 +            unset($_SESSION['amazonpay_error']);
 +        }
 +
-+        $amazonpay_config = SC_Helper_AmazonPay::getConfig();
 +        $objAmazonPay = new SC_Helper_AmazonPay();
 +        $this->payload = SC_Helper_AmazonPay::generatePayloadByCart($this->cartKeys);
 +        $this->signature = $objAmazonPay->generateSignatureByCart($this->payload);
@@ -223,8 +351,69 @@ index 102ab10..9f5bbe4 100644
      }
  
      /**
+diff --git a/data/class/pages/mypage/LC_Page_AbstractMypage.php b/data/class/pages/mypage/LC_Page_AbstractMypage.php
+index 58a48f1..77a7f20 100755
+--- a/data/class/pages/mypage/LC_Page_AbstractMypage.php
++++ b/data/class/pages/mypage/LC_Page_AbstractMypage.php
+@@ -98,6 +98,24 @@ class LC_Page_AbstractMypage extends LC_Page_Ex
+             }
+             $this->tpl_title        = 'MYページ(ログイン)';
+             $this->tpl_mainpage     = 'mypage/login.tpl';
++
++            $objAmazonPay = new SC_Helper_AmazonPay();
++            $this->payload = SC_Helper_AmazonPay::generatePayloadByLogin(HTTPS_URL.'mypage/login.php');
++            $this->signature = $objAmazonPay->generateSignature($this->payload);
++            $this->tpl_mypage_login_button = SC_Helper_AmazonPay::getTemplatePath('mypage-login-button');
++
++            if (!empty($_GET['buyerToken'])) {
++                $buyer = $objAmazonPay->getBuyer($_GET['buyerToken']);
++                if (empty($buyer)) {
++                    SC_Utils_Ex::sfDispSiteError(SITE_LOGIN_ERROR);
++                    SC_Response_Ex::actionExit();
++                }
++                $objAmazonPay->registerCustomer($buyer, $buyer['buyerId']);
++                $objCustomer->setLogin($buyer['email']);
++
++                SC_Response_Ex::reload();
++                SC_Response_Ex::actionExit();
++            }
+         } else {
+             //マイページ会員情報表示用共通処理
+             $this->tpl_login     = true;
+diff --git a/data/class/pages/shopping/LC_Page_Shopping.php b/data/class/pages/shopping/LC_Page_Shopping.php
+index 0ebf40b..babf26a 100644
+--- a/data/class/pages/shopping/LC_Page_Shopping.php
++++ b/data/class/pages/shopping/LC_Page_Shopping.php
+@@ -248,6 +248,27 @@ class LC_Page_Shopping extends LC_Page_Ex
+                 } else {
+                     // 通常はログインページ
+                     $this->lfInitLoginFormParam($objFormParam);
++
++                    $objAmazonPay = new SC_Helper_AmazonPay();
++                    $this->payload = SC_Helper_AmazonPay::generatePayloadByLogin(SHOPPING_URL);
++                    $this->signature = $objAmazonPay->generateSignature($this->payload);
++                    $this->tpl_cart_login_button = SC_Helper_AmazonPay::getTemplatePath('cart-login-button');
++
++                    if (!empty($_GET['buyerToken'])) {
++                        $buyer = $objAmazonPay->getBuyer($_GET['buyerToken']);
++                        if (empty($buyer)) {
++                            SC_Utils_Ex::sfDispSiteError(SITE_LOGIN_ERROR);
++                            SC_Response_Ex::actionExit();
++                        }
++                        $objAmazonPay->registerCustomer($buyer, $buyer['buyerId']);
++                        $objCustomer->setLogin($buyer['email']);
++
++                        SC_Response_Ex::sendRedirect(
++                            $this->getNextLocation($this->cartKey, $this->tpl_uniqid,
++                                                   $objCustomer, $objPurchase,
++                                                   $objSiteSess));
++                        SC_Response_Ex::actionExit();
++                    }
+                 }
+ 
+                 $this->setFormParams($objFormParam, $objPurchase, $this->tpl_uniqid);
 diff --git a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php b/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
-index eacb1bc..244a06d 100644
+index eacb1bc..9756465 100644
 --- a/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
 +++ b/data/class/pages/shopping/LC_Page_Shopping_Confirm.php
 @@ -139,6 +139,7 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
@@ -245,6 +434,20 @@ index eacb1bc..244a06d 100644
                  // 購入完了ページ
                  } else {
                      $objPurchase->completeOrder(ORDER_NEW);
+@@ -179,5 +183,13 @@ class LC_Page_Shopping_Confirm extends LC_Page_Ex
+                 break;
+         }
+ 
++        if ($this->arrForm['payment_id'] == SC_Helper_AmazonPay::PAYMENT_ID && empty($this->arrForm['memo07'])) {
++            $this->renderAmazonPayButton = true;
++            $amazonpay_config = SC_Helper_AmazonPay::getConfig();
++            $objAmazonPay = new SC_Helper_AmazonPay();
++            $this->payload = SC_Helper_AmazonPay::generatePayloadByCheckout($this->cartKey);
++            $this->signature = $objAmazonPay->generateSignature($this->payload);
++            $this->tpl_checkout_button = SC_Helper_AmazonPay::getTemplatePath('checkout-button');
++        }
+     }
+ }
 diff --git a/html/shopping/amazonpay.php b/html/shopping/amazonpay.php
 new file mode 100755
 index 0000000..36d4946

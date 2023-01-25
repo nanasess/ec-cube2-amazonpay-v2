@@ -33,7 +33,7 @@ class SC_Helper_AmazonPay
         return [
             'public_key_id' => (string)getenv('AMAZONPAY_PUBLIC_KEY_ID'),
             'private_key'   => (string)getenv('AMAZONPAY_PRIVATE_KEY'),
-            'region'        => (string)getenv('AMAZONPAY_REGION'),
+            'region'        => (string)strtolower(getenv('AMAZONPAY_REGION')),
             'sandbox'       => (bool)getenv('AMAZONPAY_SANDBOX')
         ];
     }
@@ -322,6 +322,19 @@ class SC_Helper_AmazonPay
         return $path;
     }
 
+    public static function generatePayloadByCheckout(string $key = ''): array
+    {
+        return [
+            'webCheckoutDetails' => [
+                'checkoutReviewReturnUrl' => HTTPS_URL.'shopping/amazonpay.php?mode=processCheckout&cartKey='.$key
+            ],
+            'paymentDetails' => [
+                'allowOvercharge' => true
+            ],
+            'storeId' => getenv('AMAZONPAY_STORE_ID'),
+            'scopes' => ['name', 'email', 'phoneNumber', 'billingAddress']
+        ];
+    }
     /**
      * @param int[] $cartKeys
      */
@@ -329,19 +342,21 @@ class SC_Helper_AmazonPay
     {
         $payload = [];
         foreach ($cartKeys as $key) {
-            $payload[$key] = [
-                'webCheckoutDetails' => [
-                    'checkoutReviewReturnUrl' => HTTPS_URL.'shopping/amazonpay.php?mode=processCheckout&cartKey='.$key
-                ],
-                'paymentDetails' => [
-                    'allowOvercharge' => true
-                ],
-                'storeId' => getenv('AMAZONPAY_STORE_ID'),
-                'scopes' => ['name', 'email', 'phoneNumber', 'billingAddress']
-            ];
+            $payload[$key] = self::generatePayloadByCheckout($key);
         }
 
         return $payload;
+    }
+
+    public static function generatePayloadByLogin(string $signInReturnUrl): array
+    {
+        return [
+            'signInReturnUrl' => $signInReturnUrl,
+            'storeId' => getenv('AMAZONPAY_STORE_ID'),
+            'signInScopes' => [
+                'name', 'email', 'billingAddress', 'shippingAddress'
+            ]
+        ];
     }
 
     public function generateSignatureByCart(array $payloads): array
@@ -352,5 +367,71 @@ class SC_Helper_AmazonPay
         }
 
         return $signature;
+    }
+
+    public function getBuyer(string $buyerToken): array
+    {
+        $client = new Client($this->amazonpayConfig);
+        $result = $client->getBuyer($buyerToken);
+
+        return json_decode($result['response'], true);
+    }
+
+    public function findCustomer(string $buyer_id, string $email): ?array
+    {
+        $objQuery = SC_Query_Ex::getSingletonInstance();
+        return $objQuery->getRow('*', 'dtb_customer', '(amazonpay_buyer_id = ? OR email = ?) AND del_flg = 0 ', [$buyer_id, $email]);
+    }
+
+    public function registerCustomer(array $buyer, string $buyer_id): void
+    {
+        $objQuery = SC_Query_Ex::getSingletonInstance();
+        $arrCustomer['name01'] = $buyer['name'];
+        $arrCustomer['name02'] = '　';
+        $arrCustomer['email'] = $buyer['email'];
+        if (array_key_exists('billingAddress', $buyer)) {
+            list($arrCustomer['zip01'], $arrCustomer['zip02']) = explode('-', $buyer['billingAddress']['postalCode']);
+            $arrCustomer['pref'] = self::convertToPrefId($buyer['billingAddress']['stateOrRegion']);
+            $arrCustomer['addr01'] = $buyer['billingAddress']['city'].$buyer['billingAddress']['addressLine1'];
+            $arrCustomer['addr02'] = $buyer['billingAddress']['addressLine2'];
+            $arrCustomer['company_name'] = $buyer['billingAddress']['addressLine3'];
+            if (array_key_exists('phoneNumber', $buyer['billingAddress']) && !empty($buyer['billingAddress']['phoneNumber'])) {
+                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['billingAddress']['phoneNumber']);
+                list($arrCustomer['tel01'], $arrCustomer['tel02'], $arrCustomer['tel03']) = str_split($phone, 4);
+            }
+        }
+        $arrCustomer['amazonpay_buyer_id'] = $buyer_id;
+        $arrCustomer['secret_key'] = SC_Helper_Customer_Ex::sfGetUniqSecretKey();
+        $arrCustomer['status'] = 2;
+
+        $existCustomer = $this->findCustomer($buyer_id, $arrCustomer['email']);
+
+        if (empty($existCustomer)) {
+            $arrCustomer['customer_id'] = SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer);
+        } else {
+            $arrCustomer['customer_id'] = SC_Helper_Customer_Ex::sfEditCustomerData($arrCustomer, $existCustomer['customer_id']);
+        }
+
+        $arrOtherDeliv = $objQuery->getRow('*', 'dtb_other_deliv', 'customer_id = ? AND amazonpay_shipping_address_flg = ?', [$arrCustomer['customer_id'], 1]);
+
+        if (array_key_exists('shippingAddress', $buyer)) {
+            $arrOtherDeliv['name01'] = $buyer['shippingAddress']['name'];
+            $arrOtherDeliv['name02'] = '';
+
+            list($arrOtherDeliv['zip01'], $arrOtherDeliv['zip02']) = explode('-', $buyer['shippingAddress']['postalCode']);
+            $arrOtherDeliv['pref'] = self::convertToPrefId($buyer['shippingAddress']['stateOrRegion']);
+            $arrOtherDeliv['addr01'] = $buyer['shippingAddress']['city'].$buyer['shippingAddress']['addressLine1'];
+            $arrOtherDeliv['addr02'] = $buyer['shippingAddress']['addressLine2'];
+            $arrOtherDeliv['company_name'] = $buyer['shippingAddress']['addressLine3'];
+            if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
+                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['shippingAddress']['phoneNumber']);
+                list($arrOtherDeliv['tel01'], $arrOtherDeliv['tel02'], $arrOtherDeliv['tel03']) = str_split($phone, 4);
+            }
+        }
+        $arrOtherDeliv['amazonpay_shipping_address_flg'] = 1;
+        $arrOtherDeliv['customer_id'] = $arrCustomer['customer_id'];
+
+        $objAddress = new SC_Helper_Address_Ex();
+        $objAddress->registAddress($arrOtherDeliv);
     }
 }
