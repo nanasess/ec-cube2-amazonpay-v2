@@ -1,7 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - 'develop/**'
   pull_request_target:
     types: [labeled]
 
@@ -9,7 +11,7 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || contains(github.event.pull_request.labels.*.name, 'safe to test')
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') || contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3

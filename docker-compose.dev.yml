@@ -7,6 +7,8 @@ services:
       composer config repositories.ec-cube2-amazonpay-v2 '{\"type\": \"path\", \"url\": \"../composer\"}' &&
       composer require nanasess/ec-cube2-amazonpay-v2 "dev-main@dev" --ignore-platform-req=php -W &&
       patch -p1 < ../composer/patches/amazonpay.patch &&
+      cd data/vendor/amzn/amazon-pay-api-sdk-php && curl -sS -L https://patch-diff.githubusercontent.com/raw/amzn/amazon-pay-api-sdk-php/pull/35.diff | patch -p1 &&
+      cd /var/www/app &&
       if [ $${DB_TYPE} == 'pgsql' ]; then /wait-for-pgsql.sh ls; else /wait-for-mysql.sh ls; fi &&
       export PGPASSWORD=$${DB_PASSWORD} &&
       if [ $${DB_TYPE} == 'pgsql' ]; then cat ../composer/sql/setup.sql | psql -v -U $${DB_USER} -h $${DB_SERVER} -d $${DB_NAME}; else mysql -u $${DB_USER} -p$${DB_PASSWORD} -h $${DB_SERVER} $${DB_NAME} < ../composer/sql/setup.sql; fi &&
@@ -14,4 +16,3 @@ services:
       "
     volumes:
       - ".:/var/www/composer:delegated"
-

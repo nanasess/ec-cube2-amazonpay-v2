@@ -59,6 +59,28 @@ index c68babc..82f7aeb 100644
 +<!--{if $tpl_mypage_login_button}-->
 +    <!--{include $tpl_mypage_login_button}-->
 +<!--{/if}-->
+diff --git a/data/Smarty/templates/default/shopping/complete.tpl b/data/Smarty/templates/default/shopping/complete.tpl
+index 2dd78a8..22da5f0 100644
+--- a/data/Smarty/templates/default/shopping/complete.tpl
++++ b/data/Smarty/templates/default/shopping/complete.tpl
+@@ -63,8 +63,17 @@
+                         <img class="hover_change_image" src="<!--{$TPL_URLPATH}-->img/button/btn_toppage.jpg" alt="トップページへ" />
+                     </a>
+                 </li>
++                <li>
++                    <button id="signout">Amazon からサインアウト</button>
++                </li>
+             </ul>
+         </div>
+ 
+     </div>
+ </div>
++<script src="https://static-fe.payments-amazon.com/checkout.js"></script>
++<script>
++  document.getElementById('signout').onclick = function() {
++    amazon.Pay.signout();
++  };
++</script>
 diff --git a/data/Smarty/templates/default/shopping/confirm.tpl b/data/Smarty/templates/default/shopping/confirm.tpl
 index edc5ae1..5d5315b 100644
 --- a/data/Smarty/templates/default/shopping/confirm.tpl
