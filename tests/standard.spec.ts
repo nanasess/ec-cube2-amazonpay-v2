@@ -23,5 +23,7 @@ test('homepage has Playwright in title and get started link linking to the intro
       timeout: 300000,
     }
   );
+  await page.getByRole('button', { name: 'Amazon からサインアウト' }).click();
+  await page.waitForTimeout(1000);
   await expect(page.locator('h2.title')).toHaveText('ご注文完了');
 });

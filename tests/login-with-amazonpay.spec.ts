@@ -28,5 +28,7 @@ test('login with amazonpay', async ({ page }) => {
       timeout: 300000,
     });
   await expect(page.locator('h2.title')).toHaveText('ご注文完了');
+  await page.getByRole('button', { name: 'Amazon からサインアウト' }).click();
+  await page.waitForTimeout(1000);
   await page.getByRole('link', { name: 'トップページへ' }).click();
 });
