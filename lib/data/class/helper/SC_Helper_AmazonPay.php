@@ -14,6 +14,8 @@ class SC_Helper_AmazonPay
     const LOG_FILE = DATA_REALDIR.'logs/amazonpay.log';
     /** @var string */
     const TEMPLATE_REALDIR = __DIR__.'/../../../templates';
+    /** @var string[] */
+    const HYPHEN = ['‐', '-', '‑', '⁃', '−'];
 
     /**
      * @var array{public_key_id:string, private_key:string, region:string, sandbox: bool}
@@ -169,7 +171,7 @@ class SC_Helper_AmazonPay
             $arrOrder['order_addr02'] = $buyer['billingAddress']['addressLine2'];
             $arrOrder['order_company_name'] = $buyer['billingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['billingAddress']) && !empty($buyer['billingAddress']['phoneNumber'])) {
-                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['billingAddress']['phoneNumber']);
+                $phone = str_replace(self::HYPHEN, '', $buyer['billingAddress']['phoneNumber']);
                 list($arrOrder['order_tel01'], $arrOrder['order_tel02'], $arrOrder['order_tel03']) = str_split($phone, 4);
             }
         }
@@ -196,7 +198,7 @@ class SC_Helper_AmazonPay
             $arrShipping['shipping_addr02'] = $buyer['shippingAddress']['addressLine2'];
             $arrShipping['shipping_company_name'] = $buyer['shippingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
-                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['shippingAddress']['phoneNumber']);
+                $phone = str_replace(self::HYPHEN, '', $buyer['shippingAddress']['phoneNumber']);
                 list($arrShipping['shipping_tel01'], $arrShipping['shipping_tel02'], $arrShipping['shipping_tel03']) = str_split($phone, 4);
             }
         }
@@ -396,7 +398,7 @@ class SC_Helper_AmazonPay
             $arrCustomer['addr02'] = $buyer['billingAddress']['addressLine2'];
             $arrCustomer['company_name'] = $buyer['billingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['billingAddress']) && !empty($buyer['billingAddress']['phoneNumber'])) {
-                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['billingAddress']['phoneNumber']);
+                $phone = str_replace(self::HYPHEN, '', $buyer['billingAddress']['phoneNumber']);
                 list($arrCustomer['tel01'], $arrCustomer['tel02'], $arrCustomer['tel03']) = str_split($phone, 4);
             }
         }
@@ -424,7 +426,7 @@ class SC_Helper_AmazonPay
             $arrOtherDeliv['addr02'] = $buyer['shippingAddress']['addressLine2'];
             $arrOtherDeliv['company_name'] = $buyer['shippingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
-                $phone = str_replace(['‐', '-', '‑', '⁃'], '', $buyer['shippingAddress']['phoneNumber']);
+                $phone = str_replace(self::HYPHEN, '', $buyer['shippingAddress']['phoneNumber']);
                 list($arrOtherDeliv['tel01'], $arrOtherDeliv['tel02'], $arrOtherDeliv['tel03']) = str_split($phone, 4);
             }
         }
