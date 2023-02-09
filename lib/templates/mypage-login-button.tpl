@@ -4,7 +4,7 @@
      // set checkout environment
      merchantId: '<!--{$smarty.env.AMAZONPAY_MERCHANT_ID|h}-->',
      ledgerCurrency: 'JPY',
-     sandbox: Boolean('<!--{$smarty.env.AMAZONPAY_SANDBOX|h}-->'),
+     sandbox: Boolean(<!--{$smarty.env.AMAZONPAY_SANDBOX|h}-->),
      // customize the buyer experience
      checkoutLanguage: 'ja_JP',
      productType: 'SignIn',
