@@ -356,7 +356,7 @@ class SC_Helper_AmazonPay
             'signInReturnUrl' => $signInReturnUrl,
             'storeId' => getenv('AMAZONPAY_STORE_ID'),
             'signInScopes' => [
-                'name', 'email', 'billingAddress', 'shippingAddress'
+                'name', 'email', 'billingAddress', 'shippingAddress', 'phoneNumber'
             ]
         ];
     }
