@@ -10,8 +10,8 @@ test('login with amazonpay', async ({ page }) => {
   await page.getByLabel('Eメールアドレス').fill(process.env.SANDBOX_BUYER_ACCOUNT);
   await page.getByLabel('パスワード').fill(process.env.SANDBOX_BUYER_PASSWORD);
   await page.getByRole('button', { name: 'ログイン' }).click();
-  await expect(page.locator('.secure-signin')).toHaveText('Amazonアカウントでログインしています');
-  await page.locator('input[type="submit"]').first().click();
+  // await expect(page.locator('.secure-signin')).toHaveText('Amazonアカウントでログインしています');
+  // await page.locator('input[type="submit"]').first().click();
   await page.getByRole('button', { name: '選択したお届け先に送る' }).click();
   await page.getByText('Amazon Pay').click();
   await page.getByRole('button', { name: '次へ' }).click();

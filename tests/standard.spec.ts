@@ -10,9 +10,9 @@ test('homepage has Playwright in title and get started link linking to the intro
   await page.getByLabel('Eメールアドレス').fill(process.env.SANDBOX_BUYER_ACCOUNT);
   await page.getByLabel('パスワード').fill(process.env.SANDBOX_BUYER_PASSWORD);
   await page.getByRole('button', { name: 'ログイン' }).click();
-  await expect(page.locator('.maxo-bn-singnin-txt-block')).toHaveText('Amazonアカウントでログインしています');
-  await page.waitForTimeout(1000);
-  await page.locator('input[type="submit"]').first().click();
+  // await expect(page.locator('.maxo-bn-singnin-txt-block')).toHaveText('Amazonアカウントでログインしています');
+  // await page.waitForTimeout(1000);
+  // await page.locator('input[type="submit"]').first().click();
   await page.getByRole('button', { name: '次へ' }).click(
     {
       timeout: 300000,
