@@ -140,11 +140,11 @@ class SC_Helper_AmazonPay
      *     billingAddress: array{
      *         postalCode: string,
      *         stateOrRegion: string,
-     *         City: string,
-     *         AddressLine1: string,
-     *         AddressLine2: string,
-     *         AddressLine3: string,
-     *         Phone: string,
+     *         city: string,
+     *         addressLine1: string,
+     *         addressLine2: string,
+     *         addressLine3: string,
+     *         phoneNumber: string,
      *     }
      * } $buyer
      * @param array{

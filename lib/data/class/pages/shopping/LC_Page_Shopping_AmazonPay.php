@@ -57,6 +57,8 @@ class LC_Page_Shopping_AmazonPay extends LC_Page_Cart_Ex
                 $this->lfSetCurrentCart($objSiteSess, $objCartSess, $cartKey);
                 $checkoutSessionId = htmlspecialchars($_GET['amazonCheckoutSessionId'], ENT_QUOTES);
                 $objAmazonPay = new SC_Helper_AmazonPay();
+                // 配送先が設定されている場合は削除する
+                SC_Helper_Purchase_Ex::unsetAllShippingTemp(true);
                 try {
                     $arrBuyer = $objAmazonPay->getCheckoutSession($checkoutSessionId);
                     SC_Helper_AmazonPay::log('buyer: '.print_r($arrBuyer, true));
