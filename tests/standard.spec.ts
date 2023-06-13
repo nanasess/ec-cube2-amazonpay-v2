@@ -6,7 +6,10 @@ test('homepage has Playwright in title and get started link linking to the intro
   await page.getByRole('heading', { name: 'おなべ' }).getByRole('link', { name: 'おなべ' }).click();
   await expect(page).toHaveURL('https://localhost:4430/products/detail.php?product_id=2');
   await page.getByRole('link', { name: 'カゴに入れる' }).click();
-  await page.locator('.amazonpay-button-view1').click();
+  await page.getByRole('link', { name: 'レシピ(1)' }).click();
+  await expect(page).toHaveURL('https://localhost:4430/products/list.php?category_id=6');
+  await page.getByRole('button', { name: 'カゴに入れる' }).click();
+  await page.locator('.amazonpay-button-view1').first().click();
   await page.getByLabel('Eメールアドレス').fill(process.env.SANDBOX_BUYER_ACCOUNT);
   await page.getByLabel('パスワード').fill(process.env.SANDBOX_BUYER_PASSWORD);
   await page.getByRole('button', { name: 'ログイン' }).click();

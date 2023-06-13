@@ -1,5 +1,5 @@
 <script src="https://static-fe.payments-amazon.com/checkout.js"></script>
-<!--{foreach from=$cartItems[$key] item=item}-->
+<!--{foreach from=$cartKeys item=key}-->
     <script>
      amazon.Pay.renderButton('#AmazonPayButton<!--{$key}-->', {
          // set checkout environment
