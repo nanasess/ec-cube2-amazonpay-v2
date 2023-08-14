@@ -6,7 +6,7 @@
   "author": "Kentaro Ohkouchi <nanasess@fsm.ne.jp>",
   "license": "LGPL",
   "devDependencies": {
-    "@playwright/test": "^1.35.0"
+    "@playwright/test": "^1.37.0"
   },
   "scripts": {}
 }
