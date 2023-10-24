@@ -15,7 +15,7 @@ class SC_Helper_AmazonPay
     /** @var string */
     const TEMPLATE_REALDIR = __DIR__.'/../../../templates';
     /** @var string[] */
-    const HYPHEN = ['‐', '-', '‑', '⁃', '−'];
+    const HYPHEN = ['‐', '-', '‑', '⁃', '−', 'ｰ'];
 
     /**
      * @var array{public_key_id:string, private_key:string, region:string, sandbox: bool}
