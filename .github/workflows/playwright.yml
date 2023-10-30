@@ -14,7 +14,7 @@ jobs:
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/develop') || contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         node-version: 16
     - name: Setup environment
