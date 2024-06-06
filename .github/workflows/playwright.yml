@@ -37,7 +37,7 @@ jobs:
         SANDBOX_BUYER_ACCOUNT: ${{ secrets.SANDBOX_BUYER_ACCOUNT }}
         SANDBOX_BUYER_PASSWORD: ${{ secrets.SANDBOX_BUYER_PASSWORD }}
       run: yarn playwright test
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report
