@@ -172,7 +172,9 @@ class SC_Helper_AmazonPay
             $arrOrder['order_company_name'] = $buyer['billingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['billingAddress']) && !empty($buyer['billingAddress']['phoneNumber'])) {
                 $phone = str_replace(self::HYPHEN, '', $buyer['billingAddress']['phoneNumber']);
-                list($arrOrder['order_tel01'], $arrOrder['order_tel02'], $arrOrder['order_tel03']) = str_split($phone, 4);
+                $plus = '';
+                list($arrOrder['order_tel01'], $arrOrder['order_tel02'], $arrOrder['order_tel03'], $plus) = str_split($phone, 4);
+                $arrOrder['order_tel03'] .= $plus;
             }
         }
         $arrOrder['memo07'] = $buyer['paymentPreferences'][0]['paymentDescriptor'];
@@ -199,7 +201,9 @@ class SC_Helper_AmazonPay
             $arrShipping['shipping_company_name'] = $buyer['shippingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
                 $phone = str_replace(self::HYPHEN, '', $buyer['shippingAddress']['phoneNumber']);
-                list($arrShipping['shipping_tel01'], $arrShipping['shipping_tel02'], $arrShipping['shipping_tel03']) = str_split($phone, 4);
+                $plus = '';
+                list($arrShipping['shipping_tel01'], $arrShipping['shipping_tel02'], $arrShipping['shipping_tel03'], $plus) = str_split($phone, 4);
+                $arrShipping['shipping_tel03'] .= $plus;
             }
         }
 
@@ -494,6 +498,7 @@ class SC_Helper_AmazonPay
     public function registerCustomer(array $buyer, string $buyer_id): void
     {
         $objQuery = SC_Query_Ex::getSingletonInstance();
+        $arrCustomer = [];
         $arrCustomer['name01'] = $buyer['name'];
         $arrCustomer['name02'] = '　';
         $arrCustomer['email'] = $buyer['email'];
@@ -505,7 +510,9 @@ class SC_Helper_AmazonPay
             $arrCustomer['company_name'] = $buyer['billingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['billingAddress']) && !empty($buyer['billingAddress']['phoneNumber'])) {
                 $phone = str_replace(self::HYPHEN, '', $buyer['billingAddress']['phoneNumber']);
-                list($arrCustomer['tel01'], $arrCustomer['tel02'], $arrCustomer['tel03']) = str_split($phone, 4);
+                $plus = '';
+                list($arrCustomer['tel01'], $arrCustomer['tel02'], $arrCustomer['tel03'], $plus) = str_split($phone, 4);
+                $arrCustomer['tel03'] .= $plus;
             }
         }
         $arrCustomer['amazonpay_buyer_id'] = $buyer_id;
@@ -533,7 +540,9 @@ class SC_Helper_AmazonPay
             $arrOtherDeliv['company_name'] = $buyer['shippingAddress']['addressLine3'];
             if (array_key_exists('phoneNumber', $buyer['shippingAddress']) && !empty($buyer['shippingAddress']['phoneNumber'])) {
                 $phone = str_replace(self::HYPHEN, '', $buyer['shippingAddress']['phoneNumber']);
-                list($arrOtherDeliv['tel01'], $arrOtherDeliv['tel02'], $arrOtherDeliv['tel03']) = str_split($phone, 4);
+                $plus = '';
+                list($arrOtherDeliv['tel01'], $arrOtherDeliv['tel02'], $arrOtherDeliv['tel03'], $plus) = str_split($phone, 4);
+                $arrOtherDeliv['tel03'] .= $plus;
             }
         }
         $arrOtherDeliv['amazonpay_shipping_address_flg'] = 1;
